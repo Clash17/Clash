@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <title>Signup</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="jumpborton" style="margin-top:20%">
+            <form action="/signup" method="post">
+                <legend>Sign Up</legend>
+                <fieldset>
+				{% csrf_token %}
+                <div class="form-group">
+                    <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Enter Name of First player" name="p1name" required>
+                    </div>
+					<div class="form-group">
+                    <input type="text" class="form-control" placeholder="Enter Name of Second player" name="p2name" required>
+                    </div>
+                    <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Enter Email of First player" name="p1email" required>
+                    </div>
+                    <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Enter Email of Second player" name="p2email" required>
+                    </div>
+                    <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Enter Mobile Number of First player" name="p1mno" required>
+                    </div>
+                    <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Enter Mobile Number of Second player" name="p2mno" required>
+                    </div>
+                    <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Enter UserName" name="uname" required>
+                    </div>
+                    <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Enter Password" name="pass" required>
+                    </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary form-control">Sign Up</button>
+                </div>
+                </fieldset>
+            </form>
+             </div>
+               </div>
+        <div  class="col-md-4"></div>
+
+
+ </div>
+
+</div>
+</body>
+</html>
