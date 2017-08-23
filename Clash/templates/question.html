@@ -21,18 +21,34 @@
                 <fieldset>
 
                     {{ item.question }}<br>
-                  <form action="">
+
+                      <div>
                     <input type="radio" name="rb" value="optiona"> {{ item.optiona }}<br>
                     <input type="radio" name="rb" value="optionb"> {{ item.optionb }}<br>
                     <input type="radio" name="rb" value="ootionc"> {{ item.optionc }}<br>
                     <input type="radio" name="rb" value="optiond"> {{ item.optiond }}<br>
-
+                      </div>
                         <div class="form-group">
-                    <button type="submit" class="btn btn-primary form-control">Login</button>
-                </div>
+                    <button type="submit" class="btn btn-primary form-control" name="submit">Submit</button>
+                         </div>
                 </fieldset>
+
             </form>
-                <a href="">Don't Have An Acoount yet ?</a>
+                <form action="/question" method="post">
+                    {% csrf_token %}
+                    <div>
+                <button type="submit" class="btn btn-primary form-control" name="skip" >Skip</button>
+                    </div>
+                </form>
+
+                    <div>
+                <form action="/logout" method="post">
+                    <div>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary form-control" name="logout" >logout</button>
+                    </div>
+                </form>
+                    </div>
              </div>
                </div>
         <div  class="col-md-4"></div>
