@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from round1 import views
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name='0'),
@@ -24,5 +26,6 @@ urlpatterns = [
     url(r'^check', views.check, name='2'),
     url(r'^question', views.question, name='2'),
     url(r'^ans', views.ans, name='2'),
+    url(r'^logout', views.logoutfunc, name='2'),
 
 ]
