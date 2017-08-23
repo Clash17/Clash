@@ -55,4 +55,23 @@ def check(request):
     else:
         return HttpResponse("login Fail")
 
+def skip(request):
+    u = request.user.players
+    u.score = u.score + 1
+    u.save()
+
+
+def evaluate(request):
+    rb = request.POST.get("rb")
+    if rb is not None:
+        u = request.user.players
+        qtemp = Qattempt.objects.filter(user=request.user)
+        qtemp = qtemp.last()
+        ans = qtemp.question.ans
+        if (rb == ans):
+            u.score = u.score + 4
+            u.save()
+        else:
+            u.score = u.score - 2
+            u.save()
 
