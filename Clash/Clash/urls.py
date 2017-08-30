@@ -26,6 +26,9 @@ urlpatterns = [
     url(r'^check', views.check, name='2'),
     url(r'^question', views.question, name='2'),
     url(r'^ans', views.ans, name='2'),
+    url(r'^submit', views.eval, name='2'),
+    url(r'^harmonic', views.harmonic, name='2'),
+    url(r'^delete', views.delete, name='2'),
     url(r'^logout', views.logoutfunc, name='2'),
 
 ]
