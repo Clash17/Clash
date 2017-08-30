@@ -11,6 +11,10 @@ class Question(models.Model):
     optiond = models.CharField(max_length=100)
     ans = models.CharField(max_length=100)
     qlevel = models.BooleanField(default=0)  # 0 for juniors 1 for seniors
+    def __str__(self):
+        a = self.id
+        a = str(a)
+        return self.question + "  id =" + a
 
 class Players(models.Model):
     pid=models.OneToOneField(User)
@@ -22,11 +26,16 @@ class Players(models.Model):
     p2phone = models.CharField(max_length=44)
     score = models.IntegerField(default=0)
     level = models.BooleanField(default=0)  #0 for juniors 1 for seniors
-    #harmonic = models.BooleanField(default=0)
-    #skip-remain = models.BooleanField(default=0)
-    #skipcount
-
+    harmonic = models.BooleanField(default=0)
+    harmonic_count = models.IntegerField(default=0)
+    harmonic_inst = models.IntegerField(default=0)
+    skipactive = models.BooleanField(default=1)
+    skipcount = models.IntegerField(default=0)
+    def __str__(self):
+        return self.p1name
 
 class Qattempt(models.Model):
     question = models.ForeignKey(Question)
     user = models.ForeignKey(User)
+    def __str__(self):
+        return self.question.question
