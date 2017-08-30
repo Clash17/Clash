@@ -27,47 +27,92 @@ def signup(request):
 
 def login_page(request):
     return render(request, 'login.html', locals())
-def randomquestiongenrate(request):
-    t = random.randint(2,5)
-    que =Question.objects.get(id=t)
-    qtemp=Qattempt.objects.filter(user=request.user)
-    for q in qtemp:
-        if q.question.id == que.id:
-             randomquestiongenrate(request)
-    return que
 
 
 def logoutfunc(request):
     score=request.user.players.score
     logout(request)
     return HttpResponse(score)
+
 def question(request):
-    if 'submit' in request.POST:
-        eval(request)
-    if 'skip' in request.POST:
-        skip(request)
-    que=randomquestiongenrate(request)
-    qtemp=Qattempt(question=que,user=request.user)
-    qtemp.save()
-    item=que
-    context = {'item': item}
-    return render(request, 'question.html', context)
+    if request.method == 'POST':
+        u = request.user.players
+        t = random.randint(2, 13)
+        que = Question.objects.get(id=t)
+        qtemp = Qattempt.objects.filter(user=request.user)
+        for q in qtemp:
+            if q.question.id == que.id and q.question.qlevel == u.level:
+                return question(request)
+        else:
+            qtemp = Qattempt.objects.create(question=que, user=request.user)
+            qtemp.save()
+            item = que
+            score = request.user.players.score
+            context = {'item': item, 'score': score}
+            return render(request, 'question.html', context)
+    else:
+        logout(request)
+        return render(request, 'login.html')
+
+
+def delete(request):
+    qtemp = Qattempt.objects.filter(user=request.user).delete()
+    return render(request, 'delete.html')
+
 
 def eval(request):
-    rb = request.POST.get("rb")
-    if rb is not None:
-        u = request.user.players
-        qtemp = Qattempt.objects.filter(user=request.user)
-        qtemp=qtemp.last()
-        ans=qtemp.question.ans
-        if rb == ans:
-            u.score = u.score + 4
-            u.skipcount = u.skipcount + 1
-        else:
-            u.score = u.score - 2
-            u.skipcount = 0
-        u.save()
+    if request.method == 'POST':
+        rb = request.POST.get("rb")
+        if rb is not None:
+            u = request.user.players
+            qtemp = Qattempt.objects.filter(user=request.user)
+            qtemp=qtemp.last()
+            ans=qtemp.question.ans
+            if u.harmonic == 1 and u.harmonic_inst != u.harmonic_count:
+                if rb == ans:
+                    u.score = u.score + 4 + 2 * (u.harmonic_inst + 1)
+                    u.skipcount = u.skipcount + 1
+                else:
+                    u.score = u.score - 2 - (u.harmonic_inst + 1)
+                    u.skipcount = 0
+                u.harmonic_inst = u.harmonic_inst + 1
+                u.save()
 
+            else:
+                if rb == ans:
+                    u.score = u.score + 4
+                    u.skipcount = u.skipcount + 1
+                else:
+                    u.score = u.score - 2
+                    u.skipcount = 0
+                u.save()
+            return question(request)
+        else:
+            qtemp = Qattempt.objects.filter(user=request.user)
+            qtemp = qtemp.last()
+            item = qtemp
+            score = request.user.players.score
+            context = {'item': item, 'score': score}
+            return render(request, 'question.html', context)
+    else:
+        logout(request)
+        return render(request, 'login.html')
+
+
+def harmonic(request):
+   harmo = request.POST['harmo']
+   u = request.user.players
+   if u.harmonic == 0 and u.harmonic_count == 0:
+       u.harmonic = 1
+       u.harmonic_count = harmo
+       u.save()
+       qtemp = Qattempt.objects.filter(user=request.user)
+       qtemp = qtemp.last()
+       que = Question.objects.get(id=qtemp.question.id)
+       item = que
+       score = request.user.players.score
+   context = {'item': item, 'score': score}
+   return render(request, 'question.html', context)
 
 
 def skip(request):
@@ -79,20 +124,6 @@ def skipmakeactive(request):
         request.user.players.skipactive = 1
 
 
-def evaluate(request):
-    rb = request.POST.get("rb")
-    if rb is not None:
-        u = request.user.players
-        qtemp = Qattempt.objects.filter(user=request.user)
-        qtemp = qtemp.last()
-        ans = qtemp.question.ans
-        if (rb == ans):
-            u.score = u.score + 4
-            skipmakeactive(request)
-        else:
-            u.score = u.score - 2
-            request.user.players.skipcount=0
-    u.save()
 
 def ans(request):
     rb = request.POST.get("rb")
