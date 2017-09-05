@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" >
 <head>
-    <title>Login</title>
+    <title>Question</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -11,22 +11,22 @@
 <body>
 
 <div class="container">
-
-
+score : {{ score }}
+skip  : {{ skip  }}
         <div class="col-md-4"></div>
         <div class="col-md-4">
             <div class="jumpborton" style="margin-top:20%">
-            <form action="/question" method="post">{% csrf_token %}
-                <legend>Login</legend>
+            <form action="/submit" method="post">{% csrf_token %}
+                <legend>Question</legend>
                 <fieldset>
 
                     {{ item.question }}<br>
 
                       <div>
-                    <input type="radio" name="rb" value="optiona"> {{ item.optiona }}<br>
-                    <input type="radio" name="rb" value="optionb"> {{ item.optionb }}<br>
-                    <input type="radio" name="rb" value="ootionc"> {{ item.optionc }}<br>
-                    <input type="radio" name="rb" value="optiond"> {{ item.optiond }}<br>
+                    <input type="radio" name="rb" value="a"> {{ item.optiona }}<br>
+                    <input type="radio" name="rb" value="b"> {{ item.optionb }}<br>
+                    <input type="radio" name="rb" value="c"> {{ item.optionc }}<br>
+                    <input type="radio" name="rb" value="d"> {{ item.optiond }}<br>
                       </div>
                         <div class="form-group">
                     <button type="submit" class="btn btn-primary form-control" name="submit">Submit</button>
@@ -34,13 +34,15 @@
                 </fieldset>
 
             </form>
-                <form action="/question" method="post">
+                   <form action="/skip" method="post">
                     {% csrf_token %}
                     <div>
-                <button type="submit" class="btn btn-primary form-control" name="skip" >Skip</button>
+                <button type="submit" class="btn btn-primary form-control" name="harmonic" >Skip</button>
                     </div>
                 </form>
-
+                <div>
+                <button type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#myModal">Harmonic</button>
+                </div>
                     <div>
                 <form action="/logout" method="post">
                     <div>
@@ -53,8 +55,28 @@
                </div>
         <div  class="col-md-4"></div>
 
+    <div class="modal fade" id="myModal" role="dialog">
+     <div class="modal-dialog">
 
- </div>
+      <!-- Modal content-->
+      <div class="modal-content">
+
+          <form action="/harmonics" method="post">
+              <legend>Question</legend>
+              {% csrf_token %}
+        <div class="modal-body">
+           <input type="text" class="form-control" placeholder="Enter No of Question" name="harmo" required>
+        </div>
+        <div class="modal-footer">
+           <button type="submit" class="btn btn-primary form-control" name="submit" >submit</button>
+        </div>
+          </form>
+      </div>
+
+        </div>
+        </div>
+
+    </div>
 
 </div>
 </body>
