@@ -37,18 +37,19 @@ def logoutfunc(request):
 def question(request):
     if request.method == 'POST':
         u = request.user.players
-        t = random.randint(2, 13)
+        t = random.randint(1,20)
         que = Question.objects.get(id=t)
         qtemp = Qattempt.objects.filter(user=request.user)
         for q in qtemp:
-            if q.question.id == que.id and q.question.qlevel == u.level:
+            if q.question.id == que.id or q.question.qlevel != u.level:
                 return question(request)
         else:
             qtemp = Qattempt.objects.create(question=que, user=request.user)
             qtemp.save()
             item = que
             score = request.user.players.score
-            context = {'item': item, 'score': score}
+            skip = u.skipactive
+            context = {'item': item, 'score': score , 'skip' : skip}
             return render(request, 'question.html', context)
     else:
         logout(request)
@@ -57,6 +58,14 @@ def question(request):
 
 def delete(request):
     qtemp = Qattempt.objects.filter(user=request.user).delete()
+    u = request.user.players
+    u.score = 0
+    u.skipcount = 0
+    u.skipactive = 1
+    u.harmonic = 0
+    u.harmonic_count = 0
+    u.harmonic_inst = 0
+    u.save()
     return render(request, 'delete.html')
 
 
@@ -68,29 +77,39 @@ def eval(request):
             qtemp = Qattempt.objects.filter(user=request.user)
             qtemp=qtemp.last()
             ans=qtemp.question.ans
-            if u.harmonic == 1 and u.harmonic_inst != u.harmonic_count:
+            if u.harmonic == 1 and u.harmonic_inst < u.harmonic_count:
                 if rb == ans:
                     u.score = u.score + 4 + 2 * (u.harmonic_inst + 1)
                     u.skipcount = u.skipcount + 1
+                    skipmakeactive(request)
+
                 else:
-                    u.score = u.score - 2 - (u.harmonic_inst + 1)
+                    u.score = u.score -2 - 2*(u.harmonic_inst + 1)
                     u.skipcount = 0
+                    u.harmonic_inst = u.harmonic_count
+                    u.harmonic = 0
                 u.harmonic_inst = u.harmonic_inst + 1
                 u.save()
+
 
             else:
                 if rb == ans:
                     u.score = u.score + 4
                     u.skipcount = u.skipcount + 1
+                    skipmakeactive(request)
+
                 else:
                     u.score = u.score - 2
                     u.skipcount = 0
                 u.save()
+#            skipmakeactive(request)
             return question(request)
         else:
             qtemp = Qattempt.objects.filter(user=request.user)
             qtemp = qtemp.last()
             item = qtemp
+            que = Question.objects.get(id=qtemp.question.id)
+            item = que
             score = request.user.players.score
             context = {'item': item, 'score': score}
             return render(request, 'question.html', context)
@@ -106,22 +125,50 @@ def harmonic(request):
        u.harmonic = 1
        u.harmonic_count = harmo
        u.save()
-       qtemp = Qattempt.objects.filter(user=request.user)
-       qtemp = qtemp.last()
-       que = Question.objects.get(id=qtemp.question.id)
-       item = que
-       score = request.user.players.score
+   qtemp = Qattempt.objects.filter(user=request.user)
+   qtemp = qtemp.last()
+   que = Question.objects.get(id=qtemp.question.id)
+   item = que
+   score = request.user.players.score
    context = {'item': item, 'score': score}
    return render(request, 'question.html', context)
 
 
 def skip(request):
-    request.user.players.skipactive = 0
+    u = request.user.players
+    if u.harmonic == 0:
+        print("hello")
+        if u.skipactive > 0:
+            print("pagal tu")
+            u.skipactive = u.skipactive - 1
+            u.save()
+            return question(request)
+        else:
+            qtemp = Qattempt.objects.filter(user=request.user)
+            qtemp = qtemp.last()
+            que = Question.objects.get(id=qtemp.question.id)
+            item = que
+            score = request.user.players.score
+            context = {'item': item, 'score': score}
+            return render(request, 'question.html', context)
+    else :
+        qtemp = Qattempt.objects.filter(user=request.user)
+        qtemp = qtemp.last()
+        que = Question.objects.get(id=qtemp.question.id)
+        item = que
+        score = request.user.players.score
+        context = {'item': item, 'score': score}
+        return render(request, 'question.html', context)
+
 
 def skipmakeactive(request):
-    request.user.players.skipcount=request.user.players.skipcount+1
-    if request.user.players.skipcount == 3:
-        request.user.players.skipactive = 1
+    u = request.user.players
+    if u.skipcount == 3:
+        u.skipactive = u.skipactive + 1
+        u.skipcount = 0
+        u.save()
+    else:
+        pass
 
 
 
