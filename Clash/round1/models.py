@@ -14,7 +14,7 @@ class Question(models.Model):
     def __str__(self):
         a = self.id
         a = str(a)
-        return self.question + "  id =" + a
+        return self.question + "  id = " + a
 
 class Players(models.Model):
     pid=models.OneToOneField(User)
@@ -29,7 +29,7 @@ class Players(models.Model):
     harmonic = models.BooleanField(default=0)
     harmonic_count = models.IntegerField(default=0)
     harmonic_inst = models.IntegerField(default=0)
-    skipactive = models.BooleanField(default=1)
+    skipactive = models.IntegerField(default=1)
     skipcount = models.IntegerField(default=0)
     def __str__(self):
         return self.p1name
